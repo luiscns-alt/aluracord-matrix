@@ -78,7 +78,7 @@ export default function ChatPage() {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: appConfig.theme.colors.primary[500],
-        backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
+        backgroundImage: `url(https://raw.githubusercontent.com/gist/luiscns-alt/ae22e5cad74415230c074ee4a2adb536/raw/68cddb955a69d1503e0871bfb1d8c1bb475c45e2/Hexagon.svg)`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundBlendMode: "multiply",
