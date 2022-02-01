@@ -1,37 +1,41 @@
-import {
-  Box,
-  Text,
-  TextField,
-  Image,
-  Button,
-  Icon,
-} from "@skynexui/components";
+import { Box, Text, TextField, Image, Button } from "@skynexui/components";
 import React from "react";
 import appConfig from "../config.json";
+import { supabase } from "../utils/supabaseClient";
 
 export default function ChatPage() {
   const [mensagem, setMensagem] = React.useState("");
   const [listaDeMensagens, setListaDeMensagens] = React.useState([]);
 
-  /*
-    // Usuário
-    - Usuário digita no campo textarea
-    - Aperta enter para enviar
-    - Tem que adicionar o texto na listagem
-    
-    // Dev
-    - [X] Campo criado
-    - [X] Vamos usar o onChange usa o useState (ter if pra caso seja enter pra limpar a variavel)
-    - [X] Lista de mensagens 
-    */
+  React.useEffect(() => {
+    supabase
+      .from("mensagens")
+      .select("*")
+      .order("id", { ascending: false })
+      .then(({ data }) => {
+        console.log("Dados da consulta:", data);
+        setListaDeMensagens(data);
+      });
+  }, []);
+
   function handleNovaMensagem(novaMensagem) {
     const mensagem = {
-      id: listaDeMensagens.length + 1,
+      // id: listaDeMensagens.length + 1,
       de: "vanessametonini",
       texto: novaMensagem,
     };
 
-    setListaDeMensagens([mensagem, ...listaDeMensagens]);
+    supabase
+      .from("mensagens")
+      .insert([
+        // Tem que ser um objeto com os MESMOS CAMPOS que você escreveu no supabase
+        mensagem,
+      ])
+      .then(({ data }) => {
+        console.log("Criando mensagem: ", data);
+        setListaDeMensagens([data[0], ...listaDeMensagens]);
+      });
+
     setMensagem("");
   }
 
@@ -42,7 +46,7 @@ export default function ChatPage() {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: appConfig.theme.colors.primary[500],
-        backgroundImage: `url(https://raw.githubusercontent.com/gist/luiscns-alt/ae22e5cad74415230c074ee4a2adb536/raw/68cddb955a69d1503e0871bfb1d8c1bb475c45e2/Hexagon.svg)`,
+        backgroundImage: `url(https://virtualbackgrounds.site/wp-content/uploads/2020/08/the-matrix-digital-rain.jpg)`,
         backgroundRepeat: "no-repeat",
         backgroundSize: "cover",
         backgroundBlendMode: "multiply",
@@ -114,13 +118,6 @@ export default function ChatPage() {
                 backgroundColor: appConfig.theme.colors.neutrals[800],
                 marginRight: "12px",
                 color: appConfig.theme.colors.neutrals[200],
-              }}
-            />
-            <Icon
-              name="FaCheck"
-              onClick={(event) => {
-                console.log(event);
-                handleNovaMensagem(mensagem);
               }}
             />
           </Box>
@@ -195,7 +192,7 @@ function MessageList(props) {
                   display: "inline-block",
                   marginRight: "8px",
                 }}
-                src={`https://github.com/vanessametonini.png`}
+                src={`https://github.com/${mensagem.de}.png`}
               />
               <Text tag="strong">{mensagem.de}</Text>
               <Text
